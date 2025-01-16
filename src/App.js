@@ -4,72 +4,70 @@ import axios from "axios";
 import DaySchedule from "./components/DaySchedule";
 import LessonForm from "./components/LessonForm";
 import Navigation from "./components/Navigation";
+import DayList from "./components/DayList";
 
 const App = () => {
-    const [schedule, setSchedule] = useState([]);
+  const [schedule, setSchedule] = useState([]);
 
-    // Funkcja do pobierania danych z API lub localStorage
-    const fetchSchedule = async () => {
-        const localData = JSON.parse(localStorage.getItem("schedule"));
-        console.log("localData", localData); // SprawdŸ, czy dane s¹ w localStorage
+  const fetchSchedule = async () => {
+    const localData = JSON.parse(localStorage.getItem("schedule"));
+    if (localData) {
+      setSchedule(localData);
+    } else {
+      try {
+        const response = await axios.get("/api/schedule");
+        setSchedule(response.data);
+        localStorage.setItem("schedule", JSON.stringify(response.data));
+      } catch (error) {
+        console.error("Error fetching schedule:", error);
+      }
+    }
+  };
 
-        if (localData && localData.length > 0) {
-            console.log("Loaded schedule from localStorage");
-            setSchedule(localData);
-        } else {
-            try {
-                const response = await axios.get("/api/schedule");
-                console.log("Fetched schedule from API:", response.data); // SprawdŸ odpowiedŸ z API
-                setSchedule(response.data);
-            } catch (error) {
-                console.error("Error fetching schedule:", error);
-                setSchedule([]);  // Pusta lista w przypadku b³êdu
-            }
+  const modifyLesson = (day, lesson, action = "add") => {
+    const updatedSchedule = [...schedule];
+    const dayIndex = updatedSchedule.findIndex((d) => d.day === day);
+
+    if (dayIndex === -1) {
+      updatedSchedule.push({ day, lessons: [lesson] });
+    } else {
+      if (action === "add") {
+        updatedSchedule[dayIndex].lessons.push(lesson);
+      } else if (action === "edit") {
+        const lessonIndex = updatedSchedule[dayIndex].lessons.findIndex(
+          (l) => l.id === lesson.id
+        );
+        if (lessonIndex !== -1) {
+          updatedSchedule[dayIndex].lessons[lessonIndex] = lesson;
         }
-    };
+      } else if (action === "delete") {
+        updatedSchedule[dayIndex].lessons = updatedSchedule[dayIndex].lessons.filter(
+          (l) => l.id !== lesson.id
+        );
+      }
+    }
 
+    setSchedule(updatedSchedule);
+    localStorage.setItem("schedule", JSON.stringify(updatedSchedule));
+  };
 
-    // Funkcja do dodawania lekcji
-    const addLesson = async (day, lesson) => {
-        try {
-            // Wyœlij dane do API
-            await axios.post("/api/schedule", { day, lesson });
+  useEffect(() => {
+    fetchSchedule();
+  }, []);
 
-            // Zaktualizuj dane w localStorage
-            const updatedSchedule = JSON.parse(localStorage.getItem("schedule")) || [];
-
-            const dayIndex = updatedSchedule.findIndex((d) => d.day === day);
-            if (dayIndex === -1) {
-                updatedSchedule.push({ day, lessons: [lesson] });
-            } else {
-                updatedSchedule[dayIndex].lessons.push(lesson);
-            }
-
-            // Zapisz zaktualizowane dane w localStorage
-            localStorage.setItem("schedule", JSON.stringify(updatedSchedule));
-
-            // Zaktualizuj stan aplikacji
-            setSchedule(updatedSchedule);
-        } catch (error) {
-            console.error("Error adding lesson:", error);
-        }
-    };
-
-    // Pobieranie danych przy pierwszym renderze
-    useEffect(() => {
-        fetchSchedule();
-    }, []);
-
-    return (
-        <Router>
-            <Navigation />
-            <Routes>
-                <Route path="/" element={<DaySchedule schedule={schedule} />} />
-                <Route path="/add" element={<LessonForm onAdd={addLesson} />} />
-            </Routes>
-        </Router>
-
-    );
+  return (
+    <Router>
+      <Navigation />
+      <Routes>
+        <Route path="/" element={<DayList schedule={schedule} />} />
+        <Route
+          path="/schedule/:day"
+          element={<DaySchedule schedule={schedule} onModifyLesson={modifyLesson} />}
+        />
+        <Route path="/add" element={<LessonForm onModifyLesson={modifyLesson} />} />
+      </Routes>
+    </Router>
+  );
 };
 
 export default App;

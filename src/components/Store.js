@@ -1,6 +1,6 @@
 import { createStore } from "redux";
 
-// Pocz¹tkowy stan
+// PoczÄ…tkowy stan
 const initialState = { schedule: [] };
 
 // Reducer
@@ -20,7 +20,29 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 schedule: updatedSchedule,
-            };
+        };
+      case "EDIT_LESSON":
+        const editedSchedule = [...state.schedule];
+        const dayIdx = editedSchedule.findIndex(d => d.day === action.payload.day);
+        const lessonIdx = editedSchedule[dayIdx].lessons.findIndex(l => l.id === action.payload.id);
+
+        if (lessonIdx !== -1) {
+          editedSchedule[dayIdx].lessons[lessonIdx] = {
+            ...editedSchedule[dayIdx].lessons[lessonIdx],
+            ...action.payload.updatedLesson,
+          };
+        }
+
+        return { ...state, schedule: editedSchedule };
+
+      case "DELETE_LESSON":
+        const filteredSchedule = state.schedule.map(d => ({
+          ...d,
+          lessons: d.lessons.filter(l => l.id !== action.payload.id),
+        }));
+
+        return { ...state, schedule: filteredSchedule };
+
 
         default:
             return state;
