@@ -1,37 +1,38 @@
 import axios from "axios";
+import store from "./Store"; 
 
-export const fetchSchedule = () => async (dispatch) => {
+export const fetchSchedule = async () => {
     try {
         const response = await axios.get("/api/schedule");
-        dispatch({ type: "SET_SCHEDULE", payload: response.data });
+        store.dispatch({ type: "SET_SCHEDULE", payload: response.data });
     } catch (error) {
-        dispatch({ type: "SET_ERROR", payload: error.message });
+        store.dispatch({ type: "SET_ERROR", payload: error.message });
     }
 };
 
-export const addLesson = (day, lesson) => async (dispatch) => {
+export const addLesson = async (day, lesson) => {
     try {
         const response = await axios.post("/api/schedule", { day, lesson });
-        dispatch({ type: "ADD_LESSON", payload: { day, lesson: response.data } });
+        store.dispatch({ type: "ADD_LESSON", payload: { day, lesson: response.data } });
     } catch (error) {
-        dispatch({ type: "SET_ERROR", payload: error.message });
+        store.dispatch({ type: "SET_ERROR", payload: error.message });
     }
 };
 
-export const updateLesson = (day, updatedLesson) => async (dispatch) => {
+export const updateLesson = async (day, updatedLesson) => {
     try {
         const response = await axios.put(`/api/schedule/${updatedLesson.id}`, updatedLesson);
-        dispatch({ type: "EDIT_LESSON", payload: { day, id: updatedLesson.id, updatedLesson: response.data } });
+        store.dispatch({ type: "EDIT_LESSON", payload: { day, id: updatedLesson.id, updatedLesson: response.data } });
     } catch (error) {
-        dispatch({ type: "SET_ERROR", payload: error.message });
+        store.dispatch({ type: "SET_ERROR", payload: error.message });
     }
 };
 
-export const deleteLesson = (day, id) => async (dispatch) => {
+export const deleteLesson = async (day, id) => {
     try {
         await axios.delete(`/api/schedule/${id}`);
-        dispatch({ type: "DELETE_LESSON", payload: { day, id } });
+        store.dispatch({ type: "DELETE_LESSON", payload: { day, id } });
     } catch (error) {
-        dispatch({ type: "SET_ERROR", payload: error.message });
+        store.dispatch({ type: "SET_ERROR", payload: error.message });
     }
 };

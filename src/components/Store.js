@@ -1,12 +1,9 @@
-import { createStore, applyMiddleware } from "redux";
-import { thunk } from "redux-thunk"; // Użycie eksportu nazwanego
+import { createStore } from "redux";
 
 
-// Początkowy stan
 const initialState = { schedule: [] };
 
 
-// Reducer
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case "SET_SCHEDULE":
@@ -59,7 +56,7 @@ const reducer = (state = initialState, action) => {
     }
 };
 
-// Tworzenie store z middleware
-const store = createStore(reducer, applyMiddleware(thunk));
+
+const store = createStore(reducer);
 
 export default store;

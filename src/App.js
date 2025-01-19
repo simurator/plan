@@ -1,7 +1,9 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchSchedule } from "./components/actions"
+import { useSelector } from "react-redux";
+
+import store from "./components/Store";
+import { fetchSchedule } from "./components/actions";
 
 import DaySchedule from "./components/DaySchedule";
 import LessonForm from "./components/LessonForm";
@@ -9,25 +11,34 @@ import Navigation from "./components/Navigation";
 import DayList from "./components/DayList";
 
 const App = () => {
-    const dispatch = useDispatch();
     const schedule = useSelector((state) => state.schedule);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        dispatch(fetchSchedule());
-    }, [dispatch]);
+        const loadSchedule = async () => {
+            await fetchSchedule(); 
+            setLoading(false);
+        };
 
-    const modifyLesson = (day, lesson, action = "add") => {
+        loadSchedule();
+    }, []);
+
+    const modifyLesson = async (day, lesson, action = "add") => {
         if (action === "add") {
-            dispatch({ type: "ADD_LESSON", payload: { day, lesson } });
+            store.dispatch({ type: "ADD_LESSON", payload: { day, lesson } });
         } else if (action === "edit") {
-            dispatch({
+            store.dispatch({
                 type: "EDIT_LESSON",
                 payload: { day, id: lesson.id, updatedLesson: lesson },
             });
         } else if (action === "delete") {
-            dispatch({ type: "DELETE_LESSON", payload: { day, id: lesson.id } });
+            store.dispatch({ type: "DELETE_LESSON", payload: { day, id: lesson.id } });
         }
     };
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
 
     return (
         <Router>
