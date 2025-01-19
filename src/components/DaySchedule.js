@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteLesson} from "./actions"; // Importujemy akcje
+import { deleteLesson} from "./actions"; 
 
 const DaySchedule = () => {
     const { day } = useParams();
@@ -12,7 +12,7 @@ const DaySchedule = () => {
     const [sortOrder, setSortOrder] = useState("default");
 
     useEffect(() => {
-        // Mo¿na dodaæ kod, który bêdzie reagowaæ na zmianê 'day' w URL
+        
     }, [day]);
 
     const handleEdit = (lesson) => {
@@ -27,7 +27,7 @@ const DaySchedule = () => {
 
     const daySchedule = schedule.find((d) => d.day === day);
 
-    // Funkcja sortuj¹ca lekcje
+    
     const sortLessons = (lessons) => {
         if (sortOrder === "alphabetical") {
             return [...lessons].sort((a, b) => a.subject.localeCompare(b.subject));
@@ -35,7 +35,7 @@ const DaySchedule = () => {
         if (sortOrder === "time") {
             return [...lessons].sort((a, b) => a.time.localeCompare(b.time));
         }
-        return lessons; // Domyœlna kolejnoœæ
+        return lessons; 
     };
 
     const sortedLessons = daySchedule?.lessons
@@ -46,7 +46,7 @@ const DaySchedule = () => {
         <div>
             <h2>Schedule for {day}</h2>
 
-            {/* Prze³¹cznik sortowania */}
+            {}
             <div>
                 <label htmlFor="sortOrder">Sort by:</label>
                 <select
