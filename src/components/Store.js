@@ -1,13 +1,14 @@
-import { createStore } from "redux";
+import { createStore, applyMiddleware } from "redux";
+import { thunk } from "redux-thunk";  
 
 
 const initialState = { schedule: [] };
-
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
         case "SET_SCHEDULE":
             return { ...state, schedule: action.payload };
+
         case "ADD_LESSON":
             const updatedSchedule = [...state.schedule];
             const dayIndex = updatedSchedule.findIndex(
@@ -44,19 +45,18 @@ const reducer = (state = initialState, action) => {
             return { ...state, schedule: editedSchedule };
 
         case "DELETE_LESSON":
-            const filteredSchedule = state.schedule.map((d) => ({
-                ...d,
-                lessons: d.lessons.filter((l) => l.id !== action.payload.id),
-            }));
+    const filteredSchedule = state.schedule.map((d) => ({
+        ...d,
+        lessons: d.lessons.filter((l) => l.id !== action.payload.id),
+    }));
 
-            return { ...state, schedule: filteredSchedule };
+    return { ...state, schedule: filteredSchedule };
+
 
         default:
             return state;
     }
 };
-
-
-const store = createStore(reducer);
+const store = createStore(reducer, applyMiddleware(thunk));
 
 export default store;
