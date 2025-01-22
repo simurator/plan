@@ -1,12 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
 
-export const Lesson = ({ subject, time, teacher, room }) => (
+export const Lesson = ({ subject, time, teacher, room}) => (
   <div>
     <p>Subject: {subject}</p>
     <p>Time: {time}</p>
     <p>Teacher: {teacher}</p>
     <p>Room: {room}</p>
+    
   </div>
 );
 

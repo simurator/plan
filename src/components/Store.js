@@ -45,12 +45,13 @@ const reducer = (state = initialState, action) => {
             return { ...state, schedule: editedSchedule };
 
         case "DELETE_LESSON":
-    const filteredSchedule = state.schedule.map((d) => ({
-        ...d,
-        lessons: d.lessons.filter((l) => l.id !== action.payload.id),
-    }));
+            const filteredSchedule = state.schedule.map((d) => ({
+                ...d,
+                lessons: d.lessons.filter((l) => l.id !== action.payload.id),
+            }));
 
-    return { ...state, schedule: filteredSchedule };
+            return { ...state, schedule: filteredSchedule };
+
 
 
         default:

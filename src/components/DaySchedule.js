@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useParams, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteLesson} from "./actions"; 
 
-const DaySchedule = () => {
+
+
+const DaySchedule = ({ schedule, onModifyLesson }) => {
     const { day } = useParams();
     const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const schedule = useSelector((state) => state.schedule); // Pobieramy schedule z Redux store
+  
     const [sortOrder, setSortOrder] = useState("default");
+    
 
     useEffect(() => {
         
@@ -21,7 +21,7 @@ const DaySchedule = () => {
 
     const handleDelete = (lesson) => {
         if (window.confirm("Are you sure you want to delete this lesson?")) {
-            dispatch(deleteLesson(day, lesson.id)); // Wysy³amy akcjê do usuniêcia lekcji
+            onModifyLesson(day, lesson, "delete");
         }
     };
 

@@ -1,5 +1,5 @@
 import axios from "axios";
-import store from "./Store";  // Adjust path to your store
+
 
 // Action to fetch the schedule
 export const fetchSchedule = () => {
@@ -37,14 +37,18 @@ export const updateLesson = (day, updatedLesson) => {
     };
 };
 
-// Action to delete a lesson
 export const deleteLesson = (day, id) => {
     return async (dispatch) => {
         try {
-            await axios.delete(`/api/schedule/${id}`);  // DELETE request to remove lesson
-            dispatch({ type: "DELETE_LESSON", payload: { day, id } });  // Dispatch DELETE_LESSON
+            await axios.delete(`/api/schedule/${id}`);
+            dispatch({
+                type: "DELETE_LESSON",
+                payload: { day, id }
+            });
         } catch (error) {
-            dispatch({ type: "SET_ERROR", payload: error.message });  // Handle error
+            dispatch({ type: "SET_ERROR", payload: error.message });
         }
     };
 };
+
+
